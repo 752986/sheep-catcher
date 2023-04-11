@@ -42,13 +42,14 @@ class Sheep:
 		self.x = x
 		self.y = y
 		self.dir: Direction = random.choice(list(Direction))
-		self.timer: int = random.randint(0, 50)
+		self.timer_length: int = random.randint(20, 80)
+		self.timer: int = random.randint(0, self.timer_length)
 		self.caught: bool = False
 
 	def update(self):
 		self.timer -= 1
 
-		if self.timer % 50 == 0: # only change direction every 50 game loops
+		if self.timer % self.timer_length == 0: # only change direction every 50 game loops
 			self.dir = random.choice(list(Direction)) # set random direction
 		
 		direction = self.dir.get_vector()
@@ -62,8 +63,8 @@ class Sheep:
 		if self.y > 800 - 40:
 			self.dir = Direction.UP
 
-		self.x += direction[0]
-		self.y += direction[1]
+		self.x += direction[0] * 3
+		self.y += direction[1] * 3
 
 # set up pygame stuff
 pygame.init()  
@@ -78,7 +79,7 @@ timer = 0 # used for sheep movement
 score = 0
 
 # images and fonts
-SheepPic = pygame.image.load("res/sheep.jpg").convert()
+sheep_img = pygame.image.load("res/sheep.jpg").convert()
 font = pygame.font.Font('freesansbold.ttf', 32)
 text = font.render('Score:', True, (200, 200, 0))
 text2 = font.render(str(score), True, (200, 200, 0))
@@ -104,7 +105,7 @@ def collision(player_pos: tuple[int, int], sheep: Sheep):
 # create sheep!
 # numbers in list represent xpos, ypos, direction moving, and whether it's been caught or not!
 # make more sheeps here!
-sheeps = [Sheep(random.randint(0, 700), random.randint(0, 700)) for _ in range(10000)]
+sheeps = [Sheep(random.randint(0, 700), random.randint(0, 700)) for _ in range(100)]
 
 
 # player variables
@@ -154,7 +155,7 @@ while not gameover: # GAME LOOP
 		if sheep.caught: # don't draw them if they're already caught!
 			sheeps.remove(sheep)
 
-		screen.blit(SheepPic, (sheep.x, sheep.y))
+		screen.blit(sheep_img, (sheep.x, sheep.y))
 
 
 	# update player position
